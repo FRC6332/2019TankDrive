@@ -28,6 +28,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.myRobot = wpilib.drive.DifferentialDrive(self.left, self.right) #set up diff drive using all 6 talons
         self.myRobot.setExpiration(0.1) #safety expiration of 10ms / 5ms without signal before stopping
     def autonomousInit(self):
+        self.myRobot.setSafetyEnabled(True) #since controlling the robot during auto
         cs=CameraServer.getInstance()
         cs.enableLogging()
         outputStream = cs.putVideo("Sandstream", 320, 240)
@@ -36,11 +37,19 @@ class MyRobot(wpilib.IterativeRobot):
         bindsock = context.socket(smq.SUB)
         bindsock.bind('tcp://*:5555')
         bindsock.setsockopt_string(zmq.SUBSCRIBE, unicode(''))
+
     def autonomousPeriodic(self):
         frame = bindsock.recv_string()
         img = base64.b64decode(frame)
         npimg = np.fromstring(img, dtype=np.uint8) #should be compatible with putFrame
         outputStream.putFrame(img)
+        z=self.stick.getZ()
+        if self.button0.get() == 0:
+           z = 0
+        if self.button10.get() == 1:
+            self.left_encoder.reset()
+            self.right_encoder.reset()
+        self.myRobot.tankDrive(-(self.stick.getY() * abs(self.stick.getY())) + z*abs(z), -(self.stick.getY() * abs(self.stick.getY())) - z*abs(z)) #simple x^2 throttle curve
     def teleopInit(self):
         self.myRobot.setSafetyEnabled(True) #safety first
     def teleopPeriodic(self):
