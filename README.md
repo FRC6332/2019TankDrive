@@ -1,2 +1,3 @@
 # 2019TankDrive
-2019 Tank drive
+To deploy:
+`python3 robot.py deploy`
