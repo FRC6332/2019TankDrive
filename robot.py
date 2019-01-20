@@ -52,4 +52,4 @@ class MyRobot(wpilib.IterativeRobot):
          self.myRobot.tankDrive(-(self.stick.getY() * abs(self.stick.getY())) + z*abs(z), -(self.stick.getY() * abs(self.stick.getY())) - z*abs(z)) #simple x^2 throttle curve
         #self.myRobot.tankDrive(self.leftStick.getY()**2 * -1, self.rightStick.getY()**2 * -1) #for two joystick control
 if __name__ == "__main__":
-wpilib.run(MyRobot)
+    wpilib.run(MyRobot)
