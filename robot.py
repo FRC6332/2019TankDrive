@@ -1,7 +1,8 @@
 #!/usr/bin/python
 import wpilib
 import wpilib.buttons
-
+#import zmq
+#import numpy as np
 class MyRobot(wpilib.IterativeRobot):
     kUpdatePeriod = 0.005 #this is 5 milliseconds
     def robotInit(self):
@@ -16,7 +17,7 @@ class MyRobot(wpilib.IterativeRobot):
         self.right = wpilib.SpeedControllerGroup(self.talon3, self.talon4, self.talon5)
         self.myRobot = DifferentialDrive(self.left, self.right) #set up diff drive using all 6 talons
         self.myRobot.setExpiration(0.1) #safety expiration of 10ms / 5ms without signal before stopping
-        wpilib.CameraServer.launch('vision.py:main')
+        wpilib.CameraServer.launch('vision.py:main') #possibly put this in autonomousInit
     def autonomousInit(self):
         self.myRobot.setSafetyEnabled(True) #since we are driving the robot in auto
     def autonomousPeriodic(self):
@@ -26,7 +27,13 @@ class MyRobot(wpilib.IterativeRobot):
         self.myRobot.tankDrive(-(self.stick.getY() * abs(self.stick.getY())) + z*abs(z), -(self.stick.getY() * abs(self.stick.getY())) - z*abs(z)) #simple x^2 throttle curve
     def teleopInit(self):
         self.myRobot.setSafetyEnabled(True) #safety first
+        #context = zmq.Context()
+        #angle_socket = context.socket(zmq.SUB)
+        #angle_socket.bind('tcp://*:5556')
+        #angle_socket.setsockopt_string(zmq.SUBSCRIBE, np.unicode(''))
     def teleopPeriodic(self):
+        #angle=angle.recv_string()
+        #navigate to angle, continue
         z=self.stick.getZ()
         if self.button0.get() == 0:
             z = 0
