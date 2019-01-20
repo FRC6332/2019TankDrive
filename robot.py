@@ -36,9 +36,9 @@ class MyRobot(wpilib.IterativeRobot):
     def autonomousPeriodic(self):
         frame = footage_socket.recv_string()
         img = base64.b64decode(frame)
-        npimg = np.fromstring(img, dtype=np.uint8)
+        npimg = np.fromstring(img, dtype=np.uint8) #converts 1-dimensional array into 2d numpy array
         #source = cv2.imdecode(npimg, 1)
-        outputStream.putFrame(img)
+        outputStream.putFrame(npimg)
         z=self.stick.getZ()
         if self.button0.get() == 0:
             z=0
